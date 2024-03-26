@@ -29,7 +29,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
 
     int page = 0;
-    private List<Pokemon> pokemon = new ArrayList<>();
+    private List<Pokemon> pokemonList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,44 +55,5 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadPokemon(PKWebClientApi pkApiClient, SharedPreferences.Editor editor)
     {
-        Call<PKResponse> call = pkApiClient.getPokemonPaged(page, 20);
-        call.enqueue(new Callback<PKResponse>() {
-            @Override
-            public void onResponse(Call<PKResponse> call, Response<PKResponse> response) {
-                if(!response.isSuccessful())
-                    return;
-
-                PKResponse pkResponse = response.body();
-//                Log.d(TAG, pkResponse.toString());
-                editor.putInt("currentOffset", page);
-                editor.apply();
-
-                for (PKResponseResult result : pkResponse.getResults()) {
-                    String[] pathParts = result.getUrl().split("/");
-                    Call<Pokemon> pokemonCall = pkApiClient.getPokemon(Integer.parseInt(pathParts[pathParts.length - 1]));
-
-                    pokemonCall.enqueue(new Callback<Pokemon>() {
-                        @Override
-                        public void onResponse(Call<Pokemon> call, Response<Pokemon> response) {
-                            if(!response.isSuccessful())
-                                return;
-
-                            Pokemon pokemon = response.body();
-                            Log.d(TAG, "cum");
-                        }
-
-                        @Override
-                        public void onFailure(Call<Pokemon> call, Throwable t) {
-                            Log.e(TAG, "Error getting sw response: " + t.getMessage());
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PKResponse> call, Throwable t) {
-                Log.e(TAG, "Error getting sw response: " + t.getMessage());
-            }
-        });
     }
 }

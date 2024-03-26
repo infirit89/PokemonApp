@@ -60,6 +60,38 @@ public class Sprites {
     }
 
 
+    public void setBackDefault(@Nullable String backDefault) {
+        this.backDefault = backDefault;
+    }
+
+    public void setBackFemale(@Nullable String backFemale) {
+        this.backFemale = backFemale;
+    }
+
+    public void setBackShiny(@Nullable String backShiny) {
+        this.backShiny = backShiny;
+    }
+
+    public void setBackShinyFemale(@Nullable String backShinyFemale) {
+        this.backShinyFemale = backShinyFemale;
+    }
+
+    public void setFrontDefault(@Nullable String frontDefault) {
+        this.frontDefault = frontDefault;
+    }
+
+    public void setFrontFemale(@Nullable String frontFemale) {
+        this.frontFemale = frontFemale;
+    }
+
+    public void setFrontShiny(@Nullable String frontShiny) {
+        this.frontShiny = frontShiny;
+    }
+
+    public void setFrontShinyFemale(@Nullable String frontShinyFemale) {
+        this.frontShinyFemale = frontShinyFemale;
+    }
+
     @Nullable
     @SerializedName(value="back_default")
     private String backDefault;
