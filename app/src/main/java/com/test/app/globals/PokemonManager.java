@@ -5,6 +5,10 @@ import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.test.app.adapters.PokemonAdapter;
+import com.test.app.callbacks.PokemonRequestSuccessCallback;
+import com.test.app.callbacks.PokemonsRequestSuccessCallback;
+import com.test.app.models.Pokemon;
 import com.test.app.web.PKResponse;
 import com.test.app.web.PKResponseResult;
 
@@ -15,14 +19,15 @@ import retrofit2.Response;
 public class PokemonManager {
 
 
-    public static void Init(SharedPreferences sharedPreferences)
+    public PokemonManager(SharedPreferences sharedPreferences, PokemonsRequestSuccessCallback callback)
     {
         currentPage = sharedPreferences.getInt("currentOffset", 0);
         editor = sharedPreferences.edit();
+        this.callback = callback;
     }
 
-    private static void loadPokemon(int page) {
-        Call<PKResponse> call = WebClient.GetPKWebApiClient().getPokemonPaged(page, Globals.getPageLimit());
+    public void loadPokemonPaged() {
+        Call<PKResponse> call = WebClient.GetPKWebApiClient().getPokemonPaged(currentPage, Globals.getPageLimit());
         call.enqueue(new Callback<PKResponse>() {
             @Override
             public void onResponse(Call<PKResponse> call, Response<PKResponse> response) {
@@ -30,14 +35,11 @@ public class PokemonManager {
                     return;
 
                 PKResponse pkResponse = response.body();
-                editor.putInt("currentOffset", page);
+                editor.putInt("currentOffset", currentPage);
                 editor.apply();
 
                 pokemonArray = pkResponse.getResults();
-
-//                for (PKResponseResult result : pkResponse.getResults()) {
-
-//                }
+                callback.call(pokemonArray);
             }
 
             @Override
@@ -47,25 +49,46 @@ public class PokemonManager {
         });
     }
 
-    public static PKResponseResult getPkResult(int position) {
+    public void getPokemon(int position, PokemonRequestSuccessCallback callback) {
+        Call<Pokemon> pokemonCall = WebClient.GetPKWebApiClient().getPokemon(position);
+
+        pokemonCall.enqueue(new Callback<Pokemon>() {
+            @Override
+            public void onResponse(Call<Pokemon> call, Response<Pokemon> response) {
+                if(!response.isSuccessful())
+                    return;
+
+                callback.call(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Pokemon> call, Throwable t) {
+                Log.e(TAG, "Error getting sw response: " + t.getMessage());
+            }
+        });
+    }
+
+    public PKResponseResult getPkResult(int position) {
         return pokemonArray[position];
     }
 
-    public static void NextPage() {
+    public void nextPage() {
         currentPage += Globals.getPageLimit();
-        loadPokemon(currentPage);
+        loadPokemonPaged();
     }
 
-    public static void PreviousPage() {
+    public void previousPage() {
         currentPage -= Globals.getPageLimit();
-        loadPokemon(currentPage);
+        currentPage = Math.max(currentPage, 0);
+        loadPokemonPaged();
     }
 
-    public static int GetCurrentPage() {
+    public int getCurrentPage() {
         return currentPage;
     }
 
-    private static PKResponseResult[] pokemonArray;
-    private static int currentPage;
-    private static SharedPreferences.Editor editor;
+    private PKResponseResult[] pokemonArray = new PKResponseResult[Globals.getPageLimit()];
+    private int currentPage;
+    private SharedPreferences.Editor editor;
+    private PokemonsRequestSuccessCallback callback;
 }

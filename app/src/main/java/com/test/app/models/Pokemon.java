@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class Pokemon {
 
+    public Pokemon() {}
+
     public Pokemon(int id, String name, int baseExperience, boolean isDefault,
                    int order, int weight, Sprites sprites)
     {

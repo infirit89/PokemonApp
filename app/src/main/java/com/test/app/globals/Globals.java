@@ -10,5 +10,5 @@ public class Globals {
         pageLimit = inPageLimit;
     }
 
-    private static int pageLimit = 20;
+    private static int pageLimit = 5;
 }

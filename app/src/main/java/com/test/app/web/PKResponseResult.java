@@ -2,6 +2,11 @@ package com.test.app.web;
 
 public class PKResponseResult {
 
+    public PKResponseResult() {
+        this.name = "";
+        this.url = "";
+    }
+
     public PKResponseResult(String name, String url)
     {
         this.name = name;

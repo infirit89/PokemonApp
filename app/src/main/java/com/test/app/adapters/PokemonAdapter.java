@@ -1,89 +1,88 @@
 package com.test.app.adapters;
 
-import android.content.Context;
-import android.util.Log;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.test.app.MainActivity;
 import com.test.app.R;
+import com.test.app.callbacks.OnItemClickListener;
+import com.test.app.callbacks.PokemonRequestSuccessCallback;
 import com.test.app.globals.Globals;
-import com.test.app.globals.PokemonManager;
-import com.test.app.globals.WebClient;
 import com.test.app.models.Pokemon;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+public class PokemonAdapter extends RecyclerView.Adapter<PokemonViewHolder> {
 
-public class PokemonAdapter extends BaseAdapter {
-
-
-    public PokemonAdapter(Context context)
+    public PokemonAdapter()
     {
-        this.inflater = LayoutInflater.from(context);
-        this.pokemons = new Pokemon[Globals.getPageLimit()];
+        this.pokemonArray = new Pokemon[Globals.getPageLimit()];
+    }
+
+    @NonNull
+    @Override
+    public PokemonViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.list_view_pokemon, parent, false);
+        return new PokemonViewHolder(itemView);
     }
 
     @Override
-    public int getCount() {
-        return Globals.getPageLimit();
-    }
+    public void onBindViewHolder(@NonNull PokemonViewHolder holder, int position) {
+        Pokemon pokemon = this.pokemonArray[position];
 
-    @Override
-    public Object getItem(int position) {
-        return getPokemon(position);
-    }
+        holder.itemView.setBackgroundColor(selectedPosition == position ? Color.GRAY : Color.WHITE);
 
-    @Override
-    public long getItemId(int position) {
-        return getPokemon(position).getId();
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = this.inflater.inflate(R.layout.list_view_pokemon, null);
-        Pokemon pokemon = getPokemon(position);
-
-        TextView nameTextView = convertView.findViewById(R.id.textViewName);
-        ImageView pokemonFrontDefaultSpriteTextView = convertView.findViewById(R.id.imageView);
-        Picasso.get().load(pokemon.getSprites().getFrontDefault()).into(pokemonFrontDefaultSpriteTextView);
-        return convertView;
-    }
-
-    private Pokemon getPokemon(int position) {
-        if(pokemons[position] == null)
-            loadPokemon(position);
-
-        return pokemons[position];
-    }
-
-    private void loadPokemon(int position) {
-        String[] pathParts = PokemonManager.getPkResult(position).getUrl().split("/");
-        Call<Pokemon> pokemonCall = WebClient.GetPKWebApiClient().getPokemon(Integer.parseInt(pathParts[pathParts.length - 1]));
-
-        pokemonCall.enqueue(new Callback<Pokemon>() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(Call<Pokemon> call, Response<Pokemon> response) {
-                if(!response.isSuccessful())
-                    return;
+            public void onClick(View v) {
+                if(onClickListener != null)
+                    onClickListener.onItemClick(holder.getAdapterPosition(), pokemonArray[holder.getAdapterPosition()]);
 
-                pokemons[position] = response.body();
+                if(selectedPosition > -1)
+                    notifyItemChanged(selectedPosition);
+
+                selectedPosition = holder.getAdapterPosition();
+                notifyItemChanged(selectedPosition);
             }
+        });
 
+        if(pokemon != null)
+        {
+            setViewHolder(holder, pokemon);
+            return;
+        }
+
+        String[] pathParts = MainActivity.getPokemonManager().getPkResult(position).getUrl().split("/");
+        MainActivity.getPokemonManager().getPokemon(Integer.parseInt(pathParts[pathParts.length - 1]), new PokemonRequestSuccessCallback() {
             @Override
-            public void onFailure(Call<Pokemon> call, Throwable t) {
-                Log.e(TAG, "Error getting sw response: " + t.getMessage());
+            public void call(Pokemon pokemon) {
+                if(holder.getAdapterPosition() < 0)
+                    return;
+                pokemonArray[holder.getAdapterPosition()] = pokemon;
+                setViewHolder(holder, pokemon);
             }
         });
     }
 
-    private LayoutInflater inflater;
-    private Pokemon[] pokemons;
+    @Override
+    public int getItemCount() {
+        return pokemonArray.length;
+    }
+
+    public void setOnClickListener(OnItemClickListener onClickListener) {
+        this.onClickListener = onClickListener;
+    }
+
+    private void setViewHolder(@NonNull PokemonViewHolder holder, Pokemon pokemon) {
+        holder.setPokemonName(pokemon.getName());
+        holder.setPokemonFrontSprite(pokemon.getSprites().getFrontDefault());
+    }
+
+    private Pokemon[] pokemonArray;
+    private OnItemClickListener onClickListener;
+    private int selectedPosition = -1;
 }

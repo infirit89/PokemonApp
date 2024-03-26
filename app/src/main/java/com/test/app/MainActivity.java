@@ -1,59 +1,66 @@
 package com.test.app;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.Button;
+import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.test.app.adapters.PokemonAdapter;
+import com.test.app.callbacks.OnItemClickListener;
+import com.test.app.callbacks.PokemonsRequestSuccessCallback;
+import com.test.app.globals.PokemonManager;
+import com.test.app.globals.WebClient;
 import com.test.app.models.Pokemon;
-import com.test.app.web.PKResponse;
 import com.test.app.web.PKResponseResult;
-import com.test.app.web.PKWebClientApi;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import okhttp3.OkHttpClient;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    int page = 0;
-    private List<Pokemon> pokemonList = new ArrayList<>();
+    public static PokemonManager getPokemonManager() {
+        return pokemonManager;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-        OkHttpClient client = new OkHttpClient();
-        Retrofit retrofit = new Retrofit.Builder()
-                .client(client)
-                .baseUrl("https://pokeapi.co/api/v2/")
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-        PKWebClientApi pkApiClient = retrofit.create(PKWebClientApi.class);
-        SharedPreferences sharedPreferences = getSharedPreferences("DB", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        WebClient.Init();
 
-        page = sharedPreferences.getInt("currentOffset", 0);
-        loadPokemon(pkApiClient, editor);
-    }
+        RecyclerView recyclerView = findViewById(R.id.recyclerViewPokemon);
+        pokemonManager = new PokemonManager(getSharedPreferences("DB", Context.MODE_PRIVATE), new PokemonsRequestSuccessCallback() {
+            @Override
+            public void call(PKResponseResult[] pokemon) {
+                PokemonAdapter adapter = new PokemonAdapter();
+                adapter.setOnClickListener(new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(int position, Pokemon pokemon) {
+                        if(pokemon != null)
+                            Toast.makeText(getApplicationContext(), pokemon.getName(), Toast.LENGTH_LONG).show();
+                    }
+                });
+                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+                recyclerView.setLayoutManager(layoutManager);
+                recyclerView.setItemAnimator(new DefaultItemAnimator());
+                recyclerView.setAdapter(adapter);
+            }
+        });
+        pokemonManager.loadPokemonPaged();
 
-    private void loadPokemon(PKWebClientApi pkApiClient, SharedPreferences.Editor editor)
-    {
+        Button nextButton = findViewById(R.id.btnNext);
+        Button previousButton = findViewById(R.id.btnPrev);
+
+        nextButton.setOnClickListener(v -> {
+            pokemonManager.nextPage();
+        });
+
+        previousButton.setOnClickListener(v -> {
+            pokemonManager.previousPage();
+        });
     }
+    private static PokemonManager pokemonManager;
 }
