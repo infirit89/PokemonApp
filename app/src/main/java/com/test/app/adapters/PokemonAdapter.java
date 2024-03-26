@@ -6,7 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+import com.test.app.R;
 import com.test.app.globals.Globals;
 import com.test.app.globals.PokemonManager;
 import com.test.app.globals.WebClient;
@@ -44,7 +48,13 @@ public class PokemonAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return null;
+        convertView = this.inflater.inflate(R.layout.list_view_pokemon, null);
+        Pokemon pokemon = getPokemon(position);
+
+        TextView nameTextView = convertView.findViewById(R.id.textViewName);
+        ImageView pokemonFrontDefaultSpriteTextView = convertView.findViewById(R.id.imageView);
+        Picasso.get().load(pokemon.getSprites().getFrontDefault()).into(pokemonFrontDefaultSpriteTextView);
+        return convertView;
     }
 
     private Pokemon getPokemon(int position) {
