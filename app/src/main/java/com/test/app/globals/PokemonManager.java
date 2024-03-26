@@ -39,7 +39,8 @@ public class PokemonManager {
                 editor.apply();
 
                 pokemonArray = pkResponse.getResults();
-                callback.call(pokemonArray);
+                if(callback != null)
+                    callback.call(pokemonArray);
             }
 
             @Override
@@ -87,8 +88,13 @@ public class PokemonManager {
         return currentPage;
     }
 
+    public void setCallback(PokemonsRequestSuccessCallback callback) {
+        this.callback = callback;
+    }
+
     private PKResponseResult[] pokemonArray = new PKResponseResult[Globals.getPageLimit()];
     private int currentPage;
     private SharedPreferences.Editor editor;
+
     private PokemonsRequestSuccessCallback callback;
 }

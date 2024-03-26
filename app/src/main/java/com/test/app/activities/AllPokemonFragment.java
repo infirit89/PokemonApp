@@ -22,11 +22,6 @@ import com.test.app.models.Pokemon;
 import com.test.app.web.PKResponseResult;
 
 public class AllPokemonFragment extends Fragment {
-
-    public static PokemonManager getPokemonManager() {
-        return pokemonManager;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +36,7 @@ public class AllPokemonFragment extends Fragment {
 
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 
-        pokemonManager = new PokemonManager(getActivity().getSharedPreferences("DB", Context.MODE_PRIVATE), new PokemonsRequestSuccessCallback() {
+        MainActivity.getPokemonManager().setCallback(new PokemonsRequestSuccessCallback() {
             @Override
             public void call(PKResponseResult[] pokemon) {
                 PokemonAdapter adapter = new PokemonAdapter();
@@ -66,21 +61,27 @@ public class AllPokemonFragment extends Fragment {
                 recyclerView.setAdapter(adapter);
             }
         });
-        pokemonManager.loadPokemonPaged();
+        MainActivity.getPokemonManager().loadPokemonPaged();
 
         Button nextButton = view.findViewById(R.id.btnNext);
         Button previousButton = view.findViewById(R.id.btnPrev);
 
         nextButton.setOnClickListener(v -> {
-            pokemonManager.nextPage();
+            MainActivity.getPokemonManager().nextPage();
         });
 
         previousButton.setOnClickListener(v -> {
-            pokemonManager.previousPage();
+            MainActivity.getPokemonManager().previousPage();
+        });
+
+        Button favouritesButton = view.findViewById(R.id.btnFavourites);
+        favouritesButton.setOnClickListener(v -> {
+            FavouritePokemonFragment favouritePokemonFragment = new FavouritePokemonFragment();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainerView, favouritePokemonFragment)
+                    .commit();
         });
 
         return view;
     }
-
-    private static PokemonManager pokemonManager;
 }

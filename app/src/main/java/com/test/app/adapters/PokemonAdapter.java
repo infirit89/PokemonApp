@@ -1,20 +1,28 @@
 package com.test.app.adapters;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.test.app.activities.AllPokemonFragment;
-import com.test.app.activities.MainActivity;
 import com.test.app.R;
+import com.test.app.activities.MainActivity;
 import com.test.app.callbacks.OnItemClickListener;
 import com.test.app.callbacks.PokemonRequestSuccessCallback;
+import com.test.app.db.dao.PokemonDao;
+import com.test.app.db.entities.PokemonEntity;
 import com.test.app.globals.Globals;
 import com.test.app.models.Pokemon;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 public class PokemonAdapter extends RecyclerView.Adapter<PokemonViewHolder> {
 
@@ -48,7 +56,13 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonViewHolder> {
 
                 selectedPosition = holder.getAdapterPosition();
                 notifyItemChanged(selectedPosition);
+
             }
+        });
+
+        Button favouriteBtn = holder.itemView.findViewById(R.id.btnFavourite);
+        favouriteBtn.setOnClickListener(v -> {
+            insertPokemon(pokemonArray[holder.getAdapterPosition()]);
         });
 
         if(pokemon != null)
@@ -57,8 +71,8 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonViewHolder> {
             return;
         }
 
-        String[] pathParts = AllPokemonFragment.getPokemonManager().getPkResult(position).getUrl().split("/");
-        AllPokemonFragment.getPokemonManager().getPokemon(Integer.parseInt(pathParts[pathParts.length - 1]), new PokemonRequestSuccessCallback() {
+        String[] pathParts = MainActivity.getPokemonManager().getPkResult(position).getUrl().split("/");
+        MainActivity.getPokemonManager().getPokemon(Integer.parseInt(pathParts[pathParts.length - 1]), new PokemonRequestSuccessCallback() {
             @Override
             public void call(Pokemon pokemon) {
                 if(holder.getAdapterPosition() < 0)
@@ -81,6 +95,22 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonViewHolder> {
     private void setViewHolder(@NonNull PokemonViewHolder holder, Pokemon pokemon) {
         holder.setPokemonName(pokemon.getName());
         holder.setPokemonFrontSprite(pokemon.getSprites().getFrontDefault());
+    }
+
+    private void insertPokemon(Pokemon pokemon) {
+        PokemonDao pokemonDao = Globals.AppDatabase.pokemonDao();
+        List<PokemonEntity> existingPokemon = pokemonDao.findPokemonWithId(pokemon.getId());
+        if(existingPokemon.size() > 0) {
+            Log.w(TAG, String.format("Pokemon %s already exists", pokemon.getName()));
+            return;
+        }
+
+        PokemonEntity pokemonEntity = new PokemonEntity(
+                                            pokemon.getId(),
+                                            pokemon.getName(),
+                                            pokemon.getSprites().getFrontDefault());
+
+        pokemonDao.insertPokemon(pokemonEntity);
     }
 
     private Pokemon[] pokemonArray;

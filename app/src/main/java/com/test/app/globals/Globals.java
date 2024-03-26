@@ -1,5 +1,7 @@
 package com.test.app.globals;
 
+import com.test.app.db.AppDatabase;
+
 public class Globals {
 
     public static int getPageLimit() {
@@ -10,5 +12,7 @@ public class Globals {
         pageLimit = inPageLimit;
     }
 
-    private static int pageLimit = 5;
+    public static AppDatabase AppDatabase;
+
+    private static int pageLimit = 8;
 }
