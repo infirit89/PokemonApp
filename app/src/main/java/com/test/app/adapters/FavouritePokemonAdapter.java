@@ -1,19 +1,19 @@
 package com.test.app.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.test.app.R;
-import com.test.app.activities.FavouritePokemonFragment;
+import com.test.app.activities.MainActivity;
+import com.test.app.callbacks.OnItemClickListener;
+import com.test.app.callbacks.PokemonRequestSuccessCallback;
 import com.test.app.db.dao.PokemonDao;
 import com.test.app.db.entities.PokemonEntity;
 import com.test.app.globals.Globals;
+import com.test.app.models.Pokemon;
 
 import java.util.List;
 
@@ -44,6 +44,23 @@ public class FavouritePokemonAdapter extends RecyclerView.Adapter<PokemonViewHol
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, pokemonEntities.size());
         });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(onItemClickListener != null) {
+                    MainActivity.getPokemonManager().getPokemon(entity.getPokemonId(), new PokemonRequestSuccessCallback() {
+                        @Override
+                        public void call(Pokemon pokemon) {
+                            if(holder.getAdapterPosition() < 0)
+                                return;
+
+                            onItemClickListener.onItemClick(holder.getAdapterPosition(), pokemon);
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override
@@ -51,5 +68,10 @@ public class FavouritePokemonAdapter extends RecyclerView.Adapter<PokemonViewHol
         return pokemonEntities.size();
     }
 
+    public void setOnClickListener(OnItemClickListener onClickListener) {
+        this.onItemClickListener = onClickListener;
+    }
+
     private List<PokemonEntity> pokemonEntities;
+    private OnItemClickListener onItemClickListener;
 }

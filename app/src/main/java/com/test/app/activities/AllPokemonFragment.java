@@ -47,6 +47,7 @@ public class AllPokemonFragment extends Fragment {
                             MorePokemonInfoFragment morePokemonInfoFragment = new MorePokemonInfoFragment();
                             Bundle bundle = new Bundle();
                             bundle.putSerializable("pokemon", pokemon);
+                            bundle.putString("previousPage", AllPokemonFragment.class.getName());
                             morePokemonInfoFragment.setArguments(bundle);
 
                             fragmentManager.beginTransaction()

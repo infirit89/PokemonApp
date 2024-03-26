@@ -45,10 +45,15 @@ public class MorePokemonInfoFragment extends Fragment {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         Button button = view.findViewById(R.id.btnBack);
         button.setOnClickListener(v -> {
-            AllPokemonFragment allPokemonFragment = new AllPokemonFragment();
+            Fragment fragment = null;
+            String previousPage = getArguments().getString("previousPage");
+            if(previousPage == AllPokemonFragment.class.getName())
+                fragment = new AllPokemonFragment();
+            else if(previousPage == FavouritePokemonFragment.class.getName())
+                fragment = new FavouritePokemonFragment();
 
             fragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainerView, allPokemonFragment)
+                    .replace(R.id.fragmentContainerView, fragment)
                     .commit();
         });
 

@@ -89,7 +89,7 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonViewHolder> {
     private void setViewHolder(@NonNull PokemonViewHolder holder, Pokemon pokemon) {
         holder.setPokemonName(pokemon.getName());
         holder.setPokemonFrontSprite(pokemon.getSprites().getFrontDefault());
-        Button favouriteBtn = holder.itemView.findViewById(R.id.btnFavourite);
+        Button favouriteBtn = holder.FavouriteButton;
         PokemonDao pokemonDao = Globals.AppDatabase.pokemonDao();
         List<PokemonEntity> existingPokemon = pokemonDao.findPokemonWithId(pokemon.getId());
         boolean isFavourite = existingPokemon.size() > 0;
