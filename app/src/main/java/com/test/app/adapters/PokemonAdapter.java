@@ -5,7 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.test.app.MainActivity;
+import com.test.app.activities.AllPokemonFragment;
+import com.test.app.activities.MainActivity;
 import com.test.app.R;
 import com.test.app.callbacks.OnItemClickListener;
 import com.test.app.callbacks.PokemonRequestSuccessCallback;
@@ -56,8 +57,8 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonViewHolder> {
             return;
         }
 
-        String[] pathParts = MainActivity.getPokemonManager().getPkResult(position).getUrl().split("/");
-        MainActivity.getPokemonManager().getPokemon(Integer.parseInt(pathParts[pathParts.length - 1]), new PokemonRequestSuccessCallback() {
+        String[] pathParts = AllPokemonFragment.getPokemonManager().getPkResult(position).getUrl().split("/");
+        AllPokemonFragment.getPokemonManager().getPokemon(Integer.parseInt(pathParts[pathParts.length - 1]), new PokemonRequestSuccessCallback() {
             @Override
             public void call(Pokemon pokemon) {
                 if(holder.getAdapterPosition() < 0)

@@ -1,49 +1,56 @@
-package com.test.app;
+package com.test.app.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.widget.Button;
-import android.widget.Toast;
-
+import com.test.app.R;
 import com.test.app.adapters.PokemonAdapter;
 import com.test.app.callbacks.OnItemClickListener;
 import com.test.app.callbacks.PokemonsRequestSuccessCallback;
 import com.test.app.globals.PokemonManager;
-import com.test.app.globals.WebClient;
 import com.test.app.models.Pokemon;
 import com.test.app.web.PKResponseResult;
 
-public class MainActivity extends AppCompatActivity {
+public class AllPokemonFragment extends Fragment {
 
     public static PokemonManager getPokemonManager() {
         return pokemonManager;
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    }
 
-        WebClient.Init();
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState) {
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerViewPokemon);
-        pokemonManager = new PokemonManager(getSharedPreferences("DB", Context.MODE_PRIVATE), new PokemonsRequestSuccessCallback() {
+        View view = inflater.inflate(R.layout.fragment_all_pokemon, container, false);
+
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewPokemon);
+
+        pokemonManager = new PokemonManager(getActivity().getSharedPreferences("DB", Context.MODE_PRIVATE), new PokemonsRequestSuccessCallback() {
             @Override
             public void call(PKResponseResult[] pokemon) {
                 PokemonAdapter adapter = new PokemonAdapter();
                 adapter.setOnClickListener(new OnItemClickListener() {
                     @Override
                     public void onItemClick(int position, Pokemon pokemon) {
-                        if(pokemon != null)
-                            Toast.makeText(getApplicationContext(), pokemon.getName(), Toast.LENGTH_LONG).show();
+                        if (pokemon != null)
+                            Toast.makeText(getActivity().getApplicationContext(), pokemon.getName(), Toast.LENGTH_LONG).show();
                     }
                 });
-                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
                 recyclerView.setLayoutManager(layoutManager);
                 recyclerView.setItemAnimator(new DefaultItemAnimator());
                 recyclerView.setAdapter(adapter);
@@ -51,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
         });
         pokemonManager.loadPokemonPaged();
 
-        Button nextButton = findViewById(R.id.btnNext);
-        Button previousButton = findViewById(R.id.btnPrev);
+        Button nextButton = view.findViewById(R.id.btnNext);
+        Button previousButton = view.findViewById(R.id.btnPrev);
 
         nextButton.setOnClickListener(v -> {
             pokemonManager.nextPage();
@@ -61,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
         previousButton.setOnClickListener(v -> {
             pokemonManager.previousPage();
         });
+
+        return view;
     }
+
     private static PokemonManager pokemonManager;
 }
