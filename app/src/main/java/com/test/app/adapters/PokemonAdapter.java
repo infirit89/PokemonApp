@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.test.app.activities.AllPokemonFragment;
 import com.test.app.R;
 import com.test.app.activities.MainActivity;
 import com.test.app.callbacks.OnItemClickListener;
@@ -60,11 +59,6 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonViewHolder> {
             }
         });
 
-        Button favouriteBtn = holder.itemView.findViewById(R.id.btnFavourite);
-        favouriteBtn.setOnClickListener(v -> {
-            insertPokemon(pokemonArray[holder.getAdapterPosition()]);
-        });
-
         if(pokemon != null)
         {
             setViewHolder(holder, pokemon);
@@ -95,22 +89,34 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonViewHolder> {
     private void setViewHolder(@NonNull PokemonViewHolder holder, Pokemon pokemon) {
         holder.setPokemonName(pokemon.getName());
         holder.setPokemonFrontSprite(pokemon.getSprites().getFrontDefault());
-    }
-
-    private void insertPokemon(Pokemon pokemon) {
+        Button favouriteBtn = holder.itemView.findViewById(R.id.btnFavourite);
         PokemonDao pokemonDao = Globals.AppDatabase.pokemonDao();
         List<PokemonEntity> existingPokemon = pokemonDao.findPokemonWithId(pokemon.getId());
-        if(existingPokemon.size() > 0) {
-            Log.w(TAG, String.format("Pokemon %s already exists", pokemon.getName()));
-            return;
-        }
+        boolean isFavourite = existingPokemon.size() > 0;
+        favouriteBtn.setText(isFavourite ? "Unfavourite" : "Favourite");
 
+        favouriteBtn.setOnClickListener(v -> {
+            if(isFavourite)
+                unfavouritePokemon(pokemonArray[holder.getAdapterPosition()], pokemonDao);
+            else
+                favouritePokemon(pokemonArray[holder.getAdapterPosition()], pokemonDao);
+
+            notifyItemChanged(holder.getAdapterPosition());
+        });
+
+    }
+
+    private void favouritePokemon(Pokemon pokemon, PokemonDao pokemonDao) {
         PokemonEntity pokemonEntity = new PokemonEntity(
                                             pokemon.getId(),
                                             pokemon.getName(),
                                             pokemon.getSprites().getFrontDefault());
 
         pokemonDao.insertPokemon(pokemonEntity);
+    }
+
+    private void unfavouritePokemon(Pokemon pokemon, PokemonDao pokemonDao) {
+        pokemonDao.deletePokemon(pokemon.getId());
     }
 
     private Pokemon[] pokemonArray;

@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.test.app.R;
 import com.test.app.activities.FavouritePokemonFragment;
+import com.test.app.db.dao.PokemonDao;
 import com.test.app.db.entities.PokemonEntity;
+import com.test.app.globals.Globals;
 
 import java.util.List;
 
@@ -34,6 +36,14 @@ public class FavouritePokemonAdapter extends RecyclerView.Adapter<PokemonViewHol
 
         holder.setPokemonName(entity.getName());
         holder.setPokemonFrontSprite(entity.getFrontDefaultSprite());
+        holder.setFavouriteButtonText("Unfavourite");
+        holder.FavouriteButton.setOnClickListener(v -> {
+            pokemonEntities.remove(position);
+            PokemonDao pokemonDao = Globals.AppDatabase.pokemonDao();
+            pokemonDao.deletePokemon(entity.getPokemonId());
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, pokemonEntities.size());
+        });
     }
 
     @Override

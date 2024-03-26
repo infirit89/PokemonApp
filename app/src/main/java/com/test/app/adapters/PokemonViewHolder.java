@@ -1,6 +1,7 @@
 package com.test.app.adapters;
 
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ public class PokemonViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         PokemonFrontSprite = itemView.findViewById(R.id.imageView);
         PokemonName = itemView.findViewById(R.id.textViewName);
+        FavouriteButton = itemView.findViewById(R.id.btnFavourite);
     }
 
     public void setPokemonName(String name) {
@@ -26,6 +28,11 @@ public class PokemonViewHolder extends RecyclerView.ViewHolder {
         Picasso.get().load(url).into(PokemonFrontSprite);
     }
 
+    public void setFavouriteButtonText(String buttonText) {
+        FavouriteButton.setText(buttonText);
+    }
+
     public TextView PokemonName;
     public ImageView PokemonFrontSprite;
+    public Button FavouriteButton;
 }
