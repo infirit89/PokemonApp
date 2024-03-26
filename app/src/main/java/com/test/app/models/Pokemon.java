@@ -2,7 +2,9 @@ package com.test.app.models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Pokemon {
+import java.io.Serializable;
+
+public class Pokemon implements Serializable {
 
     public Pokemon() {}
 

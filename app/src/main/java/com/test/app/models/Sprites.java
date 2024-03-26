@@ -4,7 +4,9 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Sprites {
+import java.io.Serializable;
+
+public class Sprites implements Serializable {
 
     public Sprites(String backDefault, String backFemale, String backShiny, String backShinyFemale,
                    String frontDefault, String frontFemale, String frontShiny, String frontShinyFemale)

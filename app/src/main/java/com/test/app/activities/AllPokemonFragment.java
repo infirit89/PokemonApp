@@ -6,9 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,6 +39,8 @@ public class AllPokemonFragment extends Fragment {
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerViewPokemon);
 
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
         pokemonManager = new PokemonManager(getActivity().getSharedPreferences("DB", Context.MODE_PRIVATE), new PokemonsRequestSuccessCallback() {
             @Override
             public void call(PKResponseResult[] pokemon) {
@@ -46,8 +48,16 @@ public class AllPokemonFragment extends Fragment {
                 adapter.setOnClickListener(new OnItemClickListener() {
                     @Override
                     public void onItemClick(int position, Pokemon pokemon) {
-                        if (pokemon != null)
-                            Toast.makeText(getActivity().getApplicationContext(), pokemon.getName(), Toast.LENGTH_LONG).show();
+                        if (pokemon != null) {
+                            MorePokemonInfoFragment morePokemonInfoFragment = new MorePokemonInfoFragment();
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("pokemon", pokemon);
+                            morePokemonInfoFragment.setArguments(bundle);
+
+                            fragmentManager.beginTransaction()
+                                    .replace(R.id.fragmentContainerView, morePokemonInfoFragment)
+                                    .commit();
+                        }
                     }
                 });
                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
