@@ -24,22 +24,22 @@
             android:id="@+id/btnPrev"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="Previous" />
+            android:layout_marginStart="5dp"
+            android:text="@string/previous" />
 
         <Button
             android:id="@+id/btnNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="Next" />
+            android:layout_marginStart="5dp"
+            android:text="@string/next" />
 
         <Button
             android:id="@+id/btnFavourites"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="Favourites" />
+            android:layout_marginStart="20dp"
+            android:text="@string/favourites" />
     </LinearLayout>
 
 </LinearLayout>

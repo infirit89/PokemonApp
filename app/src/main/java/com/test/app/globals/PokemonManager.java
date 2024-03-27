@@ -22,6 +22,8 @@ public class PokemonManager {
     public PokemonManager(SharedPreferences sharedPreferences, PokemonsRequestSuccessCallback callback)
     {
         currentPage = sharedPreferences.getInt("currentOffset", 0);
+        if(currentPage > 0)
+            hasReachedFirstPage = false;
         editor = sharedPreferences.edit();
         this.callback = callback;
     }
@@ -75,13 +77,20 @@ public class PokemonManager {
 
     public void nextPage() {
         currentPage += Globals.getPageLimit();
+        hasReachedFirstPage = false;
         loadPokemonPaged();
     }
 
     public void previousPage() {
         currentPage -= Globals.getPageLimit();
         currentPage = Math.max(currentPage, 0);
-        loadPokemonPaged();
+
+        if(!hasReachedFirstPage)
+            loadPokemonPaged();
+
+        if(currentPage == 0)
+            hasReachedFirstPage = true;
+
     }
 
     public int getCurrentPage() {
@@ -94,7 +103,8 @@ public class PokemonManager {
 
     private PKResponseResult[] pokemonArray = new PKResponseResult[Globals.getPageLimit()];
     private int currentPage;
-    private SharedPreferences.Editor editor;
+    private boolean hasReachedFirstPage = true;
+    private final SharedPreferences.Editor editor;
 
     private PokemonsRequestSuccessCallback callback;
 }
