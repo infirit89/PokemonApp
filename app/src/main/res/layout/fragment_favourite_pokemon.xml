@@ -6,16 +6,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".activities.FavouritePokemonFragment">
+    tools:context=".activities.FavouritePokemonFragment"
+    android:weightSum="100">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewFavouritePokemon"
         android:layout_width="match_parent"
-        android:layout_height="680dp" />
+        android:layout_height="0dp"
+        android:layout_weight="99"/>
 
     <Button
         android:id="@+id/btnAll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="All Pokemon"/>
+        android:text="@string/all_pokemon"
+        android:layout_weight="1"/>
 </LinearLayout>

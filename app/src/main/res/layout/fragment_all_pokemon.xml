@@ -6,35 +6,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".activities.AllPokemonFragment">
+    tools:context=".activities.AllPokemonFragment"
+    android:weightSum="100">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPokemon"
         android:layout_width="match_parent"
-        android:layout_height="680dp" />
+        android:layout_height="wrap_content"
+        android:layout_weight="99"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
 
         <Button
             android:id="@+id/btnPrev"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="Previous"/>
+            android:text="Previous" />
+
         <Button
             android:id="@+id/btnNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="Next"/>
+            android:text="Next" />
+
         <Button
             android:id="@+id/btnFavourites"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:text="Favourites"/>
+            android:text="Favourites" />
     </LinearLayout>
 
 </LinearLayout>

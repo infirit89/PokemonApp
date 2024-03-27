@@ -1,6 +1,9 @@
 package com.test.app.activities;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.squareup.picasso.Picasso;
@@ -33,7 +37,18 @@ public class MorePokemonInfoFragment extends Fragment {
         TextView orderTextView = view.findViewById(R.id.textViewOrder);
         ImageView spriteImageView = view.findViewById(R.id.imageView);
 
-        Pokemon pokemon = getArguments().getSerializable("pokemon", Pokemon.class);
+        Bundle bundle = getArguments();
+        if(bundle == null) {
+            Log.e(TAG, "Arguments bundle was null");
+            return null;
+        }
+
+        Pokemon pokemon = bundle.getSerializable("pokemon", Pokemon.class);
+
+        if(pokemon == null) {
+            Log.e(TAG, "Pokemon serializable was null");
+            return null;
+        }
 
         nameTextView.setText(pokemon.getName());
         weightTextView.setText(String.valueOf(pokemon.getWeight()));
@@ -42,15 +57,32 @@ public class MorePokemonInfoFragment extends Fragment {
         orderTextView.setText(String.valueOf(pokemon.getOrder()));
         Picasso.get().load(pokemon.getSprites().getFrontDefault()).into(spriteImageView);
 
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentActivity parentActivity = getActivity();
+        if(parentActivity == null)
+        {
+            Log.e(TAG, "Parent activity was null");
+            return null;
+        }
+
+        FragmentManager fragmentManager = parentActivity.getSupportFragmentManager();
         Button button = view.findViewById(R.id.btnBack);
         button.setOnClickListener(v -> {
+            int previousPage = bundle.getInt("previousPage");
+
             Fragment fragment = null;
-            String previousPage = getArguments().getString("previousPage");
-            if(previousPage == AllPokemonFragment.class.getName())
-                fragment = new AllPokemonFragment();
-            else if(previousPage == FavouritePokemonFragment.class.getName())
-                fragment = new FavouritePokemonFragment();
+            switch (previousPage) {
+                case Activities.AllPokemon:
+                    fragment = new AllPokemonFragment();
+                    break;
+                case Activities.FavouritePokemon:
+                    fragment = new FavouritePokemonFragment();
+                    break;
+            }
+
+            if(fragment == null) {
+                Log.e(TAG, "Couldn't deduce the previous fragment");
+                return;
+            }
 
             fragmentManager.beginTransaction()
                     .replace(R.id.fragmentContainerView, fragment)

@@ -72,6 +72,6 @@ public class FavouritePokemonAdapter extends RecyclerView.Adapter<PokemonViewHol
         this.onItemClickListener = onClickListener;
     }
 
-    private List<PokemonEntity> pokemonEntities;
+    private final List<PokemonEntity> pokemonEntities;
     private OnItemClickListener onItemClickListener;
 }
