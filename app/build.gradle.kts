@@ -1,5 +1,6 @@
 plugins {
     id("com.android.application")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -42,4 +43,7 @@ dependencies {
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("androidx.room:room-rxjava3:2.6.1")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth")
 }

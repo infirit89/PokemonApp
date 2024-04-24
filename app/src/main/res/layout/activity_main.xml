@@ -7,15 +7,19 @@
     android:orientation="vertical"
     tools:context=".activities.MainActivity">
 
-<!--    <ListView-->
-<!--        android:id="@+id/listViewPokemon"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent" />-->
-
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorAccent"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:menu="@menu/layout_menu"/>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:name="com.test.app.activities.AllPokemonFragment" />
+
 </LinearLayout >
