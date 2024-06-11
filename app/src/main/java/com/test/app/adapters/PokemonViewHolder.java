@@ -20,6 +20,14 @@ public class PokemonViewHolder extends RecyclerView.ViewHolder {
         FavouriteButton = itemView.findViewById(R.id.btnFavourite);
     }
 
+    public PokemonViewHolder(@NonNull View itemView, int favouriteButtonId) {
+        super(itemView);
+
+        PokemonFrontSprite = itemView.findViewById(R.id.imageView);
+        PokemonName = itemView.findViewById(R.id.textViewName);
+        FavouriteButton = itemView.findViewById(favouriteButtonId);
+    }
+
     public void setPokemonName(String name) {
         PokemonName.setText(name);
     }

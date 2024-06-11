@@ -69,6 +69,18 @@ public class MainActivity extends AppCompatActivity {
                         // without commit, won't work
                         .commit();
                 break;
+            case R.id.menuAdd:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainerView, new AddPokemonFragment())
+                        // without commit, won't work
+                        .commit();
+                break;
+            case R.id.menuUserCreated:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainerView, new UserCreatedPokemonFragment())
+                        // without commit, won't work
+                        .commit();
+                break;
         }
         return true;
     }

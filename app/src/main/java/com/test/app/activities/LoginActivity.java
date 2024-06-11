@@ -31,9 +31,6 @@ public class LoginActivity extends AppCompatActivity {
         Button registerButton = findViewById(R.id.buttonGotoRegister);
         Button loginButton = findViewById(R.id.buttonLogin);
 
-        if(currentUser != null)
-            gotoMainActivity();
-
         registerButton.setOnClickListener(v ->
         {
             Intent registerActivityIntent = new Intent(this, RegisterActivity.class);

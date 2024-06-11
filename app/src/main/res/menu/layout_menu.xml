@@ -4,10 +4,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menuAdd"
+        android:title="Add"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/menuUserCreated"
+        android:title="All Custom"
+        app:showAsAction="always"
+        />
+
+    <item
         android:id="@+id/menuUser"
         android:title="User"
         app:showAsAction="always"
         android:icon="@drawable/user"
         />
+
 
 </menu>
