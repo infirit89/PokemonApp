@@ -35,30 +35,6 @@ public class UserCreatedPokemonFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState) {
         View view = inflater.inflate(R.layout.fragment_user_created_pokemon, container, false);
 
-        FragmentActivity parentActivity = getActivity();
-        if(parentActivity == null)
-        {
-            Log.e(TAG, "Parent activity was null");
-            return null;
-        }
-
-        FragmentManager fragmentManager = parentActivity.getSupportFragmentManager();
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewUserCreatedPokemon);
-        PokemonDao pokemonDao = Globals.AppDatabase.pokemonDao();
-        List<PokemonEntity> pokemonEntities = pokemonDao.findPokemonWithId(-1);
-
-        UserPokemonAdapter userPokemonAdapter = new UserPokemonAdapter(pokemonEntities);
-
-        Utils.setRecyclerViewAdapterDefault(recyclerView, parentActivity.getApplicationContext(), userPokemonAdapter);
-
-        Button allPokemonButton = view.findViewById(R.id.btnAll);
-        allPokemonButton.setOnClickListener(v -> {
-            AllPokemonFragment allPokemonFragment = new AllPokemonFragment();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainerView, allPokemonFragment)
-                    .commit();
-        });
-
         return view;
     }
 }
